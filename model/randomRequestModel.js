@@ -20,8 +20,8 @@ const lang = [
   "de",
   "el",
   "gu",
-  "ht",
-  "he",
+  // "ht",
+  // "he",
   "hi",
   "hu",
   "is",
@@ -34,6 +34,26 @@ const lang = [
   "lv",
   "lt",
   "mk",
+  "ms",
+  "mt",
+  "my",
+  "nb",
+  "ps",
+  "fa",
+  "pl",
+  "pt",
+  "ro",
+  "ru",
+  "sk",
+  "sl",
+  "es",
+  "sw",
+  "sv",
+  "ty",
+  "th",
+  "tr",
+  "vi",
+  "cy",
 ];
 
 const postRandom = async (body) => {
@@ -46,14 +66,18 @@ const postRandom = async (body) => {
 
   console.log(randomLang);
   let result = [];
+  let response = [];
 
   const results = await randomLang.reduce(async (memo, elt) => {
     await memo;
     const from = result.length === 0 ? "fr" : randomLang[result.length];
-    const text = result.length === 0 ? body.text : result[result.length - 1][0].translations[0].text;
-    console.log(result);
-    console.log(from);
-    console.log(text);
+    const text =
+      result.length === 0
+        ? body.text
+        : result[result.length - 1][0].translations[0].text;
+    // console.log(result);
+    // console.log(from);
+    // console.log(text);
     return axios({
       baseURL: ENDPOINT,
       url: "/translate",
@@ -78,13 +102,14 @@ const postRandom = async (body) => {
       responseType: "json",
     })
       .then((response) => {
-        const [ data ] = response.data;
-        result.push([ data ]);
+        const data = response.data;
+        result.push(data);
       })
       .catch((err) => console.error(err));
   });
 
-  return Promise.all(result);
+  await result.map((elt) => response.push(elt[0].translations[0]));
 
+  return Promise.all(response);
 };
 module.exports = { postRandom };
